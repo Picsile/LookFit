@@ -1,0 +1,46 @@
+Статья: https://habr.com/ru/articles/336758/
+Скачал Yii2
+Настроил файл web
+Подключил MySQL бд
+yii migrate
+yii migrate/create init
+Заполням как спроектирована бд
+yii migrate
+composer require webonyx/graphql-php
+
+npm create vue@latest
+rmdir -Recurse -Force .\node_modules\
+npm cache clean --force
+npm install
+npm install tailwindcss @tailwindcss/vite
+npm run dev
+
+
+Код 
+На бэке:
+
+
+'components' => [
+    'request' => [
+        'parsers' => [
+            'application/json' => 'yii\web\JsonParser',
+        ],
+    ],
+],
+
+
+'corsFilter' => [
+    'class' => Cors::class,
+    'cors' => [
+        'Origin' => ['http://localhost:5173'],
+        'Access-Control-Request-Method' => ['POST', 'GET', 'OPTIONS'],
+        'Access-Control-Allow-Credentials' => true,
+        'Access-Control-Allow-Headers' => ['*'],
+    ],
+],
+
+npm i @vueuse/core
+
+
+https://www.yiiframework.com/doc/guide/2.0/ru/rest-quick-start
+https://github.com/echpochmacck/rch/blob/main/controllers/CourseController.php

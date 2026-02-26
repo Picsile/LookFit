@@ -1,0 +1,74 @@
+@import './base.css';
+@import 'tailwindcss';
+
+:root {
+  --color-main-panel: white;
+  --color-load: rgba(255, 255, 255, 0.3);
+  --color-border: rgb(211, 211, 211);
+  --color-bg: rgb(241, 242, 249);
+  --color-text-second: rgb(133, 133, 133);
+  --color-hover: #f5f5f5;
+  --color-input: #e6e6e6;
+  --color-blue: #3498db;
+  --color-hover-input: #dddddd;
+  --color-button: rgb(214, 214, 214);
+  --color-brend: linear-gradient(135deg, rgba(126, 106, 254, 1) 0%, rgba(155, 139, 255, 1) 100%);
+  --color-hover-brend: linear-gradient(135deg, rgb(142, 124, 255, 1) 0%, rgb(162, 148, 255) 100%);
+  --color-brand-light: #dfd6ff;
+  --w-navbar: 4.875rem;
+  --h-header: 3.25rem;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-VariableFont_opsz\,wght.ttf') format('truetype');
+  font-style: normal;
+}
+
+body {
+  background-color: var(--color-bg);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+.btn-default {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-default:hover,
+.btn-list:hover,
+.btn-fit:hover {
+  background-color: var(--color-hover);
+}
+
+.btn-accent {
+  background-image: var(--color-brend);
+}
+
+.btn-accent:hover {
+  background-image: var(--color-hover-brend);
+}
+
+.btn-list {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  height: 2.6rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-fit {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  border-radius: 0.75rem;
+  padding: 12px;
+  cursor: pointer;
+}
