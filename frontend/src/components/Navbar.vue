@@ -12,28 +12,28 @@ import IconSettings from './icons/IconSettings.vue'
     >
       <div class="flex flex-col items-center gap-7">
         <div class="flex items-center h-[var(h-header)]">
-          <div class="btn-default">
+          <router-link to="/" class="btn-default">
             <img class="rounded-full" src="@/assets/logo.svg" width="30" height="30" alt="Главная" />
-          </div>
+          </router-link>
         </div>
 
-        <div class="btn-default">
+        <router-link to="" class="btn-default">
           <IconHome width="26 " height="26" />
-        </div>
+        </router-link>
 
-        <div class="btn-default">
+        <router-link to="" class="btn-default">
           <IconBrush width="26 " height="26" />
-        </div>
+        </router-link>
 
-        <div class="btn-default">
+        <router-link to="" class="btn-default">
           <IconBell width="26 " height="26" />
-        </div>
+        </router-link>
       </div>
 
       <div>
-        <div class="btn-default">
+        <router-link to="" class="btn-default">
           <IconSettings width="26 " height="26" />
-        </div>
+        </router-link>
       </div>
     </nav>
   </div>
@@ -43,6 +43,7 @@ import IconSettings from './icons/IconSettings.vue'
 .btn-default:hover {
   background-color: var(--color-hover);
   animation: navbar__link 1s ease-out infinite;
+  animation-delay: 1s;
 }
 
 @keyframes navbar__link {

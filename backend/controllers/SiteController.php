@@ -60,7 +60,7 @@ class SiteController extends ActiveController
     }
 
     /**
-     * Displays contact page.
+     * Метод регистрации
      *
      * @return Response|string
      */
@@ -74,14 +74,19 @@ class SiteController extends ActiveController
 
             if ($user = $model->register()) {
                 Yii::$app->user->login($user, 3600 * 24 * 30);
-                return ['status' => 'success', 'token' => $user->auth_key];
+                return ['status' => 'success', 'user' => User::findOne(['id' => Yii::$app->user->id]), 'token' => $user->auth_key];
             } else {
-                return ['status' => 'error', 'message' => 'Ошибка при сохранении пользователя', 'errors' => $model->errors];
+                return ['status' => 'error', 'message' => 'Ошибка при сохранении пользователя', 'errorsValidation' => $model->errors];
             }
         }
         return ['status' => 'error', 'message' => 'Ошибка при получении данных', 'post' => Yii::$app->request->getBodyParams()];
     }
 
+    /**
+     * Метод Авторизации
+     *
+     * @return Response|string
+     */
     public function actionLogin()
     {
         $model = new LoginForm();
@@ -92,14 +97,13 @@ class SiteController extends ActiveController
 
             if ($model->login()) {
                 $user = Yii::$app->user->identity;
-                return ['status' => 'success', 'token' => $user->auth_key];
+                return ['status' => 'success', 'user' => User::findOne(['id' => Yii::$app->user->id]), 'token' => $user->auth_key];
             } else {
-                Yii::$app->response->statusCode = 404;
-                return ['status' => 'error', 'message' =>  "User not found"];
+                return ['status' => 'error', 'message' =>  "User not found", 'errorsValidation' => $model->errors];
             }
         }
 
-        return ['status' => 'error', 'message' => 'Error get data', 'post' => Yii::$app->request->post()];
+        return ['status' => 'error', 'message' => 'Ошибка при получении данных', 'post' => Yii::$app->request->post()];
     }
 
     public function actionFindByToken()

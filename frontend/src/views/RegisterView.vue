@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { authApi } from '@/api/api'
 import InputLabel from '@/components/InputLabel.vue'
 import LoaderForm from '@/components/LoaderForm.vue'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
 import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
+import { Field, Form } from 'vee-validate'
+import type { SubmissionContext } from 'vee-validate'
 
 const userStore = useUserStore()
 
@@ -15,40 +18,59 @@ interface RegisterForm {
   password: string
 }
 
-const form = ref<RegisterForm>({
-  login: '',
-  username: '',
-  email: '',
-  password: '',
-})
+const registerValidation = {
+  login: (value: string) => {
+    if (!value) return 'Введите логин'
+    return true
+  },
+
+  username: (value: string) => {
+    if (!value) return 'Введите имя'
+    return true
+  },
+
+  email: (value: string) => {
+    if (!value) return 'Введите email'
+    return true
+  },
+
+  password: (value: string) => {
+    if (!value) return 'Введите пароль'
+    return true
+  },
+}
 
 const isLoad = ref(false)
 
-async function register() {
+async function register(values: RegisterForm, { setErrors }: SubmissionContext): Promise<void> {
   try {
     isLoad.value = true
 
-    const response = await fetch('https://lookfit.local/backend/site/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form.value),
-    })
+    const data = await authApi.register(JSON.stringify(values))
+    console.log(data)
 
-    isLoad.value = false
+    if (data.status == 'success') {
+      // Получили данные
+      userStore.setUser(data.user)
+      localStorage.setItem('token', data.token)
 
-    const result = await response.json()
+      await router.push({ name: 'home' })
+    } else if (data.errorsValidation) {
+      const errors = data.errorsValidation
 
-    if (result.status === 'success') {
-      localStorage.setItem('token', result.token)
-      userStore.checkToken()
-      router.push({ name: 'home' })
-    } else {
-      console.error(result)
+      for (const key in errors) {
+        if (errors.hasOwnProperty(key)) {
+          errors[key] = errors[key][0]
+        }
+      }
+
+      setErrors(data.errorsValidation)
+      return
     }
   } catch (error) {
     console.error(error)
+  } finally {
+    isLoad.value = false
   }
 }
 
@@ -62,17 +84,16 @@ watch(
 
 <template>
   <div class="overflow-hidden w-screan h-screen">
-    <!-- <div autoplay muted loop class="fixed -z-10 w-full object-cover object-center">
-      <img src="../assets/background.jpg" alt="" class="w-full">
-    </div> -->
-
     <div class="flex justify-center items-center w-full h-full">
-      <form
-        @submit.prevent="register"
+      <Form
+        @submit="register"
+        :validation-schema="registerValidation"
+        v-slot="{ setErrors }"
         class="relative flex flex-col items-center gap-8 w-122 bg-(--color-main-panel) px-22 py-14 rounded-4xl"
       >
+        <!-- Hi -->
         <div class="flex flex-col gap-2 items-center">
-          <img src="../assets/logo.svg" width="52" alt="" class="pb-4" />
+          <img src="@/assets/logo.svg" width="52" alt="" class="pb-4" />
 
           <h1 class="flex flex-col items-center gap-2 text-3xl">
             <span>Добро пожаловать в</span><span class="font-bold">LookFit!</span>
@@ -80,29 +101,62 @@ watch(
           <span class="text-md">Лучшие образы уже ждут тебя!</span>
         </div>
 
+        <!-- Fields -->
         <div class="flex flex-col gap-6 w-full">
-          <InputLabel v-model="form.login" label="Логин" placeholder="outfit" type="text" />
+          <Field name="login" v-slot="{ field, errorMessage }">
+            <InputLabel
+              v-bind="field"
+              v-model="field.value"
+              type="text"
+              :errorMessage="errorMessage"
+              label="Логин"
+              placeholder="outfit"
+            />
+          </Field>
 
-          <InputLabel v-model="form.username" label="Имя" placeholder="Олег" type="text" />
+          <Field name="username" v-slot="{ field, errorMessage }">
+            <InputLabel
+              v-bind="field"
+              v-model="field.value"
+              type="text"
+              :errorMessage="errorMessage"
+              label="Имя пользователя"
+              placeholder="Олег"
+            />
+          </Field>
 
-          <InputLabel
-            v-model="form.email"
-            label="Адрес электронной почты"
-            placeholder="lookfit@gmail.com"
-            type="text"
-          />
+          <Field name="email" v-slot="{ field, errorMessage }">
+            <InputLabel
+              v-bind="field"
+              v-model="field.value"
+              type="text"
+              :errorMessage="errorMessage"
+              label="Адрес электронной почты"
+              placeholder="lookfit@gmail.com"
+            />
+          </Field>
 
-          <InputLabel v-model="form.password" label="Пароль" placeholder="" type="text" />
+          <Field name="password" v-slot="{ field, errorMessage }">
+            <InputLabel
+              v-bind="field"
+              v-model="field.value"
+              type="text"
+              :errorMessage="errorMessage"
+              label="Пароль"
+              placeholder=""
+            />
+          </Field>
         </div>
 
+        <!-- Btn send -->
         <div class="w-full flex flex-col gap-3 text-center">
           <button
             type="submit"
-            class="w-full text-center bg-(image:--color-brend) text-white py-3 rounded-xl hover:bg-(image:--color-hover-brend) transition-all"
+            class="w-full text-center bg-(image:--color-brend) text-white py-3 rounded-xl hover:bg-(image:--color-hover-brend) transition-all cursor-pointer"
           >
             Зарегистрироваться
           </button>
-          <div class="text-sm py-4">
+          <div class="text-sm pt-2 pb-4">
             <span>Уже есть аккаунт? 👉 </span>
 
             <RouterLink :to="{ name: 'login' }" class="text-blue-500 hover:text-blue-700"> Войти </RouterLink>
@@ -110,7 +164,7 @@ watch(
         </div>
 
         <LoaderForm :isLoad="isLoad" />
-      </form>
+      </Form>
     </div>
   </div>
 </template>

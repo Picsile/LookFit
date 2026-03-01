@@ -4,11 +4,8 @@ import Navbar from '../components/Navbar.vue'
 </script>
 
 <template>
-  <Header />
-  <Navbar />
-
-  <div class="pl-[var(--w-navbar)] pt-31">
-    <div class="px-4 pt-6">
+  <div class="pl-[var(--w-navbar)] pt-32.5">
+    <div class="px-4 pt-4">
       <div class="columns-7 gap-4">
         <div class="home__post">
           <img src="../../public/items/Без названия (1).jpg" alt="" />

@@ -12,6 +12,7 @@
   --color-blue: #3498db;
   --color-hover-input: #dddddd;
   --color-button: rgb(214, 214, 214);
+  --color-brend-simple: rgba(126, 106, 254, 1);
   --color-brend: linear-gradient(135deg, rgba(126, 106, 254, 1) 0%, rgba(155, 139, 255, 1) 100%);
   --color-hover-brend: linear-gradient(135deg, rgb(142, 124, 255, 1) 0%, rgb(162, 148, 255) 100%);
   --color-brand-light: #dfd6ff;
@@ -23,6 +24,15 @@
   font-family: 'Inter';
   src: url('../fonts/Inter-VariableFont_opsz\,wght.ttf') format('truetype');
   font-style: normal;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 body {
@@ -39,12 +49,19 @@ body {
   height: 3rem;
   border-radius: 0.75rem;
   cursor: pointer;
+  transition: 0.08s;
 }
 
 .btn-default:hover,
 .btn-list:hover,
 .btn-fit:hover {
   background-color: var(--color-hover);
+}
+
+.btn-default:active,
+.btn-list:active,
+.btn-fit:active {
+  scale: 0.9;
 }
 
 .btn-accent {
@@ -62,6 +79,7 @@ body {
   height: 2.6rem;
   border-radius: 0.75rem;
   cursor: pointer;
+  transition: 0.08s;
 }
 
 .btn-fit {
@@ -71,4 +89,5 @@ body {
   border-radius: 0.75rem;
   padding: 12px;
   cursor: pointer;
+  transition: 0.08s;
 }

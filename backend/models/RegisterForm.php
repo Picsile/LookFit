@@ -23,9 +23,9 @@ class RegisterForm extends Model
         return [
             [['login', 'username', 'email', 'password'], 'required'],
 
-            ['login', 'unique', 'targetClass' => User::class],
+            ['login', 'unique', 'targetClass' => User::class, 'message' => 'Этот логин уже используется'],
 
-            ['email', 'unique', 'targetClass' => User::class],
+            ['email', 'unique', 'targetClass' => User::class, 'message' => 'Этот email уже используется'],
 
             ['email', 'email'],
         ];

@@ -9,6 +9,13 @@ import { useUserStore } from '@/stores/user'
 import IconAdd from './icons/IconAdd.vue'
 import IconPhoto from './icons/IconPhoto.vue'
 import router from '@/router'
+import { authApi } from '@/api/api'
+
+interface Props {
+  hideBoards?: boolean
+}
+
+const { hideBoards = false } = defineProps<Props>()
 
 const userStore = useUserStore()
 
@@ -32,23 +39,49 @@ const handleScroll = () => {
 
 // User modal
 const isOpenUserModal = ref(false)
-const userModalRef = useTemplateRef('target')
+const userModalRef = useTemplateRef<HTMLElement>('userModal')
 const profileRef = useTemplateRef<HTMLElement>('profile')
 
-const toggleModal = () => {
+const toggleUserModal = () => {
   isOpenUserModal.value = !isOpenUserModal.value
+}
+
+// Add modal
+const isOpenAddModal = ref(false)
+const addModalRef = useTemplateRef<HTMLElement>('addModal')
+const addRef = useTemplateRef<HTMLElement>('add')
+
+const toggleAddModal = () => {
+  isOpenAddModal.value = !isOpenAddModal.value
 }
 
 onClickOutside(
   userModalRef,
   () => {
     isOpenUserModal.value = false
+    isOpenAddModal.value = false
   },
-  { ignore: [profileRef] },
+  {
+    ignore: [profileRef],
+  },
+)
+
+onClickOutside(
+  addModalRef,
+  () => {
+    isOpenAddModal.value = false
+  },
+  {
+    ignore: [addRef],
+  },
 )
 
 const logout = async () => {
-  userStore.logout()
+  await authApi.logout()
+
+  userStore.clearUser()
+  localStorage.removeItem('token')
+
   await router.push({ name: 'home' })
 }
 
@@ -96,7 +129,7 @@ onUnmounted(() => {
         <div class="flex">
           <!-- Профиль -->
           <div v-if="userStore.isAccount" class="relative">
-            <div class="btn-default" @click.stop="toggleModal" ref="profile">
+            <div class="btn-default" @click.stop="toggleUserModal" ref="profile">
               <div class="w-8 h-8 overflow-hidden rounded-full">
                 <img class="object-cover w-full h-full select-none" src="../../public/Avatar.jpg" alt="Avatar" />
               </div>
@@ -105,7 +138,7 @@ onUnmounted(() => {
             <!-- User modal -->
             <div
               v-if="isOpenUserModal"
-              ref="target"
+              ref="userModal"
               class="user-modal absolute top-12 right-0 bg-(--color-main-panel) p-4 rounded-2xl"
             >
               <!-- Профиль -->
@@ -133,12 +166,32 @@ onUnmounted(() => {
           </div>
 
           <!-- Add -->
-          <div v-if="userStore.isAccount" class="btn-default">
-            <IconAdd width="26" height="26" />
+          <div v-if="userStore.isAccount" class="relative">
+            <div class="btn-default" @click.stop="toggleAddModal" ref="add">
+              <IconAdd width="26" height="26" />
+            </div>
+
+            <!-- Add modal -->
+            <div
+              v-if="isOpenAddModal"
+              ref="addModal"
+              class="add-modal absolute top-12 right-0 bg-(--color-main-panel) p-4 rounded-2xl"
+            >
+              <router-link :to="{ path: '/public', query: { postType: 'thing' } }">
+                <button class="btn-list justify-content-start w-full font-medium px-4 whitespace-nowrap">
+                  Опубликовать вещь
+                </button>
+              </router-link>
+              <router-link :to="{ path: '/public', query: { postType: 'outfit' } }">
+                <button class="btn-list justify-content-start w-full font-medium px-4 whitespace-nowrap">
+                  Опубликовать образ
+                </button>
+              </router-link>
+            </div>
           </div>
         </div>
 
-        <!-- Авторизация -->
+        <!-- Authorization -->
         <router-link
           to="/login"
           v-if="!userStore.isAccount"
@@ -148,17 +201,18 @@ onUnmounted(() => {
           Войдите
         </router-link>
       </div>
+    </div>
 
-      <!-- Boards -->
-      <div
-        :class="{
-          'boards z-20 flex gap-5 bg-(--color-main-panel) pt-20 pb-5 px-7 rounded-xl shadow': !scrolled,
-          'boards z-20 flex gap-5 bg-(--color-main-panel) pt-6 pb-5 px-7 rounded-xl shadow-xl': scrolled,
-        }"
-      >
-        <span class="border-b-2 p-0.5 px-1.5 font-semibold cursor-pointer">Топ</span>
-        <div class="p-0.5 px-1.5 font-semibold cursor-pointer">Для вас</div>
-      </div>
+    <!-- Boards -->
+    <div
+      v-if="!hideBoards"
+      :class="{
+        'boards z-20 flex gap-5 bg-(--color-main-panel) pt-20 pb-5 px-7 rounded-xl shadow': !scrolled,
+        'boards z-20 flex gap-5 bg-(--color-main-panel) pt-6 pb-5 px-7 rounded-xl shadow-xl': scrolled,
+      }"
+    >
+      <span class="border-b-2 p-0.5 px-1.5 font-semibold cursor-pointer">Топ</span>
+      <div class="p-0.5 px-1.5 font-semibold cursor-pointer">Для вас</div>
     </div>
   </div>
 </template>
@@ -168,8 +222,9 @@ onUnmounted(() => {
   transition: 0.3s ease-in-out;
 }
 
-.user-modal {
-  box-shadow: 0px 0px 15px -7px #000000;
+.user-modal,
+.add-modal {
+  box-shadow: 0px 0px 15px -10px #000000;
 }
 
 .avatar:hover {

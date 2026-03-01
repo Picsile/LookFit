@@ -4,35 +4,55 @@ import InputLabel from '@/components/InputLabel.vue'
 import LoaderForm from '@/components/LoaderForm.vue'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
+import { Field, Form, type SubmissionContext } from 'vee-validate'
 
 const userStore = useUserStore()
 
-interface RegisterForm {
+interface LoginForm {
   email: string
   password: string
 }
 
-const form = ref<RegisterForm>({
-  email: 'q@q.com',
-  password: 'q',
-})
+const loginValidation = {
+  email: (value: string) => {
+    if (!value) return 'Введите email'
+    return true
+  },
 
-const isLoad = ref(false)
+  password: (value: string) => {
+    if (!value) return 'Введите пароль'
+    return true
+  },
+}
 
-async function login() {
+const isLoad = ref<boolean>(false)
+
+async function login(values: LoginForm, { setErrors }: SubmissionContext): Promise<void> {
   try {
     isLoad.value = true
 
-    const data = await authApi.login(JSON.stringify(form.value))
+    const data = await authApi.login(JSON.stringify(values))
 
     if (data.status === 'success') {
-      const token = ref(data.token)
+      // Получили данные
+      userStore.setUser(data.user)
+      localStorage.setItem('token', data.token)
 
-      localStorage.setItem('token', token)
-      authApi.findByToken(token)
+      await router.push({ name: 'home' })
       
-      router.push({ name: 'home' })
+    } else if (data.errorsValidation) {
+
+      const errors = data.errorsValidation
+
+      for (const key in errors) {
+        if (errors.hasOwnProperty(key)) {
+          errors[key] = errors[key][0]
+        }
+      }
+
+      setErrors(data.errorsValidation)
+      return
     }
   } catch (error) {
     console.error(error)
@@ -56,11 +76,13 @@ watch(
     </div> -->
 
     <div class="flex justify-center items-center w-full h-full">
-      <form
-        @submit.prevent="login"
-        action=""
+      <Form
+        @submit="login"
+        :validation-schema="loginValidation"
+        v-sote="{ setErrors }"
         class="flex flex-col items-center gap-8 w-120 bg-(--color-main-panel) px-22 py-14 rounded-4xl"
       >
+        <!-- Hi -->
         <div class="flex flex-col gap-2 items-center">
           <img src="../assets/logo.svg" width="52" alt="" class="pb-4" />
 
@@ -70,25 +92,40 @@ watch(
           <span class="text-md">Лучшие образы уже ждут тебя!</span>
         </div>
 
+        <!-- Fields -->
         <div class="flex flex-col gap-6 w-full">
-          <InputLabel
-            v-model="form.email"
-            label="Адрес электронной почты"
-            placeholder="lookfit@gmail.com"
-            type="text"
-          />
+          <Field name="email" v-slot="{ field, errorMessage }">
+            <InputLabel
+              v-bind="field"
+              v-model="field.value"
+              type="text"
+              :errorMessage="errorMessage"
+              label="Адрес электронной почты"
+              placeholder="lookfit@gmail.com"
+            />
+          </Field>
 
-          <InputLabel v-model="form.password" label="Пароль" placeholder="" type="text" />
+          <Field name="password" v-slot="{ field, errorMessage }">
+            <InputLabel
+              v-bind="field"
+              v-model="field.value"
+              type="text"
+              :errorMessage="errorMessage"
+              label="Пароль"
+              placeholder=""
+            />
+          </Field>
         </div>
 
+        <!-- Btn send -->
         <div class="w-full flex flex-col gap-3 text-center">
           <button
             type="submit"
-            class="w-full text-center bg-(image:--color-brend) text-white py-3 rounded-xl hover:bg-(image:--color-hover-brend) transition-all"
+            class="w-full text-center bg-(image:--color-brend) text-white py-3 rounded-xl hover:bg-(image:--color-hover-brend) transition-all cursor-pointer"
           >
             Войти
           </button>
-          <div class="text-sm py-4">
+          <div class="text-sm pt-2 pb-4">
             <span>Нет аккаунта? 👉 </span>
 
             <RouterLink :to="{ name: 'register' }" class="text-blue-500 hover:text-blue-700">
@@ -98,7 +135,7 @@ watch(
         </div>
 
         <LoaderForm :isLoad="isLoad" />
-      </form>
+      </Form>
       <!-- <div class="flex flex-col items-center gap-8 w-120 bg-(--color-main-panel) px-22 py-14 rounded-4xl">Вы успешно зарегистрировались!</div> -->
     </div>
   </div>

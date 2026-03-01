@@ -16,6 +16,7 @@ $config = [
         'request' => [
             'cookieValidationKey' => 'a',
             'baseUrl' => '',
+            // 'baseUrl' => '/backend',
 
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
@@ -63,6 +64,10 @@ $config = [
 
                 "GET backend/site/logout" => "site/logout",
                 "OPTIONS backend/site/logout" => "site/options",
+
+                // User
+                "POST backend/account/public-thing" => "account/public-thing",
+                "OPTIONS backend/account/publicThing" => "account/options",
             ],
         ],
     ],
