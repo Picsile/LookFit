@@ -6,13 +6,16 @@ import IconAddSimple from '@/components/icons/IconAddSimple.vue'
 import IconClose from '@/components/icons/iconClose.vue'
 import Input from '@/components/Input.vue'
 import Textarea from '@/components/Textarea.vue'
+import router from '@/router'
 import { Field, Form, type SubmissionContext } from 'vee-validate'
 import { ref } from 'vue'
 
 interface PostData {
+  visible: string
   title: string
   description: string
   tags: string
+  links: [string]
 }
 
 // Images
@@ -25,6 +28,7 @@ const handleFileUpload = (event: Event) => {
   if (!target.files) return
 
   images.value = [...images.value, ...Array.from(target.files)]
+  images.value = images.value.slice(0, 10)
 
   previews.value = []
 
@@ -59,6 +63,47 @@ const removeLink = (index: number) => {
   links.value.splice(index, 1)
 }
 
+// Validation
+const publicThingValidation = {
+  title: (value: string) => {
+    if (!value) return 'Введите название вещи'
+    return true
+  },
+
+  description: (value: string) => {
+    if (!value) return 'Введите описание вещи'
+    return true
+  },
+
+  tags: (value: string) => {
+    if (!value) return 'Добавьте минимум 3 тега'
+
+    const tags = value.split(' ').filter((teg) => teg.trim() !== '')
+
+    if (tags.length < 3) {
+      return 'Добавьте минимум 3 тега'
+    }
+
+    return true
+  },
+
+  'links[0]': (value: string) => {
+    if (value === '') {
+      return 'Добавьте хотя бы одну ссылку на покупку этой вещи'
+    }
+
+    return true
+  },
+
+  images: () => {
+    if (images.value.length === 0) {
+      return 'Добавьте хотя бы одно изображение'
+    }
+
+    return true
+  },
+}
+
 // Save
 const isLoad = ref(false)
 
@@ -66,9 +111,14 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
   const formData = new FormData()
 
   // Add form values
+  formData.append('visible', values.visible)
   formData.append('title', values.title)
   formData.append('description', values.description)
-  formData.append('tags', values.tags)
+
+  // Add links
+  for (let tag of values.tags.split(' ')) {
+    formData.append(`tags[]`, tag)
+  }
 
   // Add links
   for (let link of values.links) {
@@ -84,9 +134,10 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
     isLoad.value = true
 
     const data = await userApi.publicThing(formData)
-    console.log(data)
 
     if (data.status == 'success') {
+      await router.push({ name: 'home' })
+      return
     } else if (data.errorsValidation) {
       const errors = data.errorsValidation
 
@@ -109,7 +160,13 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
 
 <template>
   <div class="flex justify-center w-screen pl-[var(--w-navbar)] pt-38.5">
-    <div class="flex flex-col gap-8">
+    <Form
+      @submit="publicThing"
+      :validation-schema="publicThingValidation"
+      :initial-values="{ visible: 'public' }"
+      v-slot="{ setErrors }"
+      class="flex flex-col gap-8"
+    >
       <!-- Top -->
       <div class="flex justify-between items-center">
         <div class="flex gap-8 items-center">
@@ -119,11 +176,23 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
           </div>
         </div>
 
-        <div class="bg-(image:--color-brend) p-0.5 pb-2 rounded-2xl w-fit">
-          <div class="relative flex bg-(--color-hover-input) p-0.5 rounded-[14px]">
-            <div class="bg-(image:--color-brend) text-sm text-white p-1.5 px-4 rounded-[12px]">Публичный</div>
+        <div class="bg-(image:--color-brend) p-0.5 pb-1 rounded-2xl w-fit">
+          <div class="relative flex bg-(--color-bg) p-0.5 rounded-[14px]">
+            <Field name="visible" type="radio" value="public" v-slot="{ field }">
+              <label
+                class="has-[:checked]:bg-(image:--color-brend) has-[:checked]:text-white has-[:checked]:opacity-100 text-black opacity-60 hover:opacity-75 text-sm p-1.5 px-4 rounded-[12px] cursor-pointer"
+                ><input v-bind="field" type="radio" name="visible" class="hidden" checked />
+                Публичный
+              </label>
+            </Field>
 
-            <div class="text-sm text-black opacity-60 hover:opacity-80 p-1.5 px-4 rounded-[12px]">Приватный</div>
+            <Field name="visible" type="radio" value="private" v-slot="{ field }">
+              <label
+                class="has-[:checked]:bg-(image:--color-brend) has-[:checked]:text-white has-[:checked]:opacity-100 text-black opacity-60 hover:opacity-75 text-sm p-1.5 px-4 rounded-[12px] cursor-pointer"
+                ><input v-bind="field" type="radio" name="visible" class="hidden" />
+                Приватный
+              </label>
+            </Field>
           </div>
         </div>
       </div>
@@ -135,7 +204,7 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
           <!-- File download -->
           <div v-if="!previews.length">
             <label
-              for="image"
+              for="images"
               class="input-add-image flex flex-col gap-5 justify-center items-center w-130 aspect-[1/1] bg-(--color-input) hover:bg-(--color-hover-input) rounded-2xl cursor-pointer"
             >
               <IconAddImage class="icon-add-image -mb-3 transition" width="58" />
@@ -143,7 +212,13 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
               <span class="text-base p-1.5 px-4 border rounded-lg">Указать файл</span>
             </label>
 
-            <input id="image" type="file" multiple @change="handleFileUpload" class="hidden" />
+            <Field name="images" v-slot="{ errorMessage }">
+              <input id="images" type="file" multiple @change="handleFileUpload" class="hidden" />
+
+              <div v-if="errorMessage" class="errorMessage text-sm text-red-500 mt-1">
+                {{ errorMessage }}
+              </div>
+            </Field>
           </div>
 
           <!-- File render -->
@@ -180,7 +255,7 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
               </div>
 
               <!-- Add other image -->
-              <div>
+              <div v-if="previews.length < 10">
                 <label
                   for="image"
                   class="input-add-image flex flex-col gap-5 justify-center items-center w-20 aspect-[1/1] bg-(--color-input) hover:bg-(--color-hover-input) rounded-2xl cursor-pointer"
@@ -195,7 +270,7 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
         </div>
 
         <!-- Fields -->
-        <Form @submit="publicThing" v-slot="{ setErrors }" class="flex flex-col gap-4 w-120 -mt-1">
+        <div class="flex flex-col gap-4 w-120 -mt-1">
           <Field name="title" v-slot="{ field, errorMessage }">
             <Input v-bind="field" v-model="field.value" type="text" :errorMessage="errorMessage" label="Название" />
           </Field>
@@ -208,25 +283,6 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
             <Input v-bind="field" v-model="field.value" type="text" :errorMessage="errorMessage" label="Теги" />
           </Field>
 
-          <!-- Visible -->
-          <!-- <div class="group flex flex-col">
-            <div class="flex flex-col">
-              <Field name="visible" type="radio" value="public" v-slot="{ field }">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" v-bind="field" class="rounded-none" />
-                  Публичный
-                </label>
-              </Field>
-
-              <Field name="visible" type="radio" value="private" v-slot="{ field }">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" v-bind="field" />
-                  Приватный
-                </label>
-              </Field>
-            </div>
-          </div> -->
-
           <!-- Links -->
           <FieldArray name="links">
             <div class="group flex flex-col">
@@ -234,12 +290,17 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
 
               <div v-for="(link, index) in links" :key="index" class="flex gap-2 mb-4">
                 <Field :name="`links[${index}]`" v-slot="{ field, errorMessage }">
-                  <input
-                    v-bind="field"
-                    type="text"
-                    placeholder="https://"
-                    class="w-full bg-(--color-input) px-5 py-2.5 rounded-2xl hover:bg-(--color-hover-input) peer focus:outline focus:outline-indigo-500"
-                  />
+                  <div class="flex flex-col w-full">
+                    <input
+                      v-bind="field"
+                      type="text"
+                      placeholder="https://"
+                      class="w-full bg-(--color-input) px-5 py-2.5 rounded-2xl hover:bg-(--color-hover-input) peer focus:outline focus:outline-indigo-500"
+                    />
+                    <div v-if="errorMessage" class="errorMessage text-sm text-red-500 mt-1">
+                      {{ errorMessage }}
+                    </div>
+                  </div>
                 </Field>
                 <button
                   v-if="index !== 0"
@@ -270,9 +331,9 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
           >
             Опубликовать
           </button>
-        </Form>
+        </div>
       </div>
-    </div>
+    </Form>
   </div>
 </template>
 

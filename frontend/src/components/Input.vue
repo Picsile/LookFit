@@ -32,7 +32,7 @@ const inputId = 'input-' + Math.floor(Math.random() * 1000)
       class="w-full bg-(--color-input) px-5 py-2.5 rounded-2xl hover:bg-(--color-hover-input) peer focus:outline focus:outline-indigo-500"
     />
 
-    <div v-if="errorMessage" class="errorMessage text-sm text-red-500 mt-1 -mb-3">
+    <div v-if="errorMessage" class="errorMessage text-sm text-red-500 mt-1 -mb-2">
       <span>{{ errorMessage }}</span>
     </div>
   </div>

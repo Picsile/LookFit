@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "image".
  *
  * @property int $id
- * @property int $path
+ * @property string $path
  * @property string $created_at
  *
  * @property GenerationImage[] $generationImages
@@ -35,8 +35,8 @@ class Image extends \yii\db\ActiveRecord
     {
         return [
             [['path'], 'required'],
-            [['path'], 'integer'],
             [['created_at'], 'safe'],
+            [['path'], 'string', 'max' => 255],
         ];
     }
 

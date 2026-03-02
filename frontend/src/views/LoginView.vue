@@ -40,7 +40,7 @@ async function login(values: LoginForm, { setErrors }: SubmissionContext): Promi
       localStorage.setItem('token', data.token)
 
       await router.push({ name: 'home' })
-      
+      return
     } else if (data.errorsValidation) {
 
       const errors = data.errorsValidation

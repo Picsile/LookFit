@@ -108,8 +108,6 @@ class SiteController extends ActiveController
 
     public function actionFindByToken()
     {
-        return ['status' => 'success', 'post' => Yii::$app->request->post()];
-
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if ($user_id = Yii::$app->user->id) {

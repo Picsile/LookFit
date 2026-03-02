@@ -5,7 +5,9 @@ namespace app\modules\account\controllers;
 use app\models\Image;
 use app\models\Post;
 use app\models\PostImage;
+use app\models\PostTag;
 use app\models\PostType;
+use app\models\Tag;
 use app\models\UploadForm;
 use app\modules\account\search\PostSearch;
 use Yii;
@@ -96,30 +98,62 @@ class PostController extends ActiveController
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if ($data = Yii::$app->request->post()) {
+            // return ['status' => 'success', '1' => $data];
+
             // Post
             $post->type_id = 1;
             $post->user_id = Yii::$app->user->id;
             $post->title = $data['title'];
             $post->description = $data['description'];
-            $post->status_id = 1;
+            $post->post_status_id = $data['visible'] == 'public' ? 1 : 2;
 
-            // Images
-            $images = UploadedFile::getInstancesByName('images');
+            if ($post->save()) {
 
-            foreach ($image as $images) {
-                $postImageModel = new PostImage();
-                $imageModel = new Image();
-                
-                
+                // Images
+                $images = UploadedFile::getInstancesByName('images');
+
+                foreach ($images as $image) {
+                    $imageModel = new Image();
+
+                    $uploadForm->imageFile = $image;
+                    if (($imageModel->path = $uploadForm->upload())) {
+                        $postImageModel = new PostImage();
+
+                        if ($imageModel->save()) {
+                            $postImageModel->post_id = $post->id;
+                            $postImageModel->image_id = $imageModel->id;
+
+                            if (!$postImageModel->save()) {
+                                return ['status' => 'error', 'message' => $postImageModel->errors];
+                            }
+                        } else {
+                            return ['status' => 'error', 'message' => $imageModel->errors];
+                        }
+                    }
+                }
+
+                // Tags
+                foreach ($data['tags'] as $tag) {
+
+                    // Tag create
+                    $tagModel = new Tag();
+
+                    if (!$tagModel = Tag::findOne(['title' => $tag])) {
+                        $tagModel = new Tag();
+                        $tagModel->title = $tag;
+                        $tagModel->save();
+                    }
+
+                    $postTagModel = new PostTag();
+                    $postTagModel->post_id = $post->id;
+                    $postTagModel->tag_id = $tagModel->id;
+                    $postTagModel->save();
+                }
+
+                return ['status' => 'success', 'message' => $post->id];
+            } else {
+                return ['status' => 'error', 'message' => $post->errors];
             }
-
-            return ['status' => 'success', '1' => $images];
-
-
-            // Tags
-
-
-            return ['status' => 'success', '1' => $post];
         }
         return ['status' => 'error', 'message' => 'Ошибка при получении данных', 'post' => Yii::$app->request->post()];
     }

@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "visibility".
+ * This is the model class for table "post_status".
  *
  * @property int $id
  * @property string $title
@@ -13,7 +13,7 @@ use Yii;
  * @property Board[] $boards
  * @property Post[] $posts
  */
-class Visibility extends \yii\db\ActiveRecord
+class PostStatus extends \yii\db\ActiveRecord
 {
 
 
@@ -22,7 +22,7 @@ class Visibility extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'visibility';
+        return 'post_status';
     }
 
     /**
@@ -54,7 +54,7 @@ class Visibility extends \yii\db\ActiveRecord
      */
     public function getBoards()
     {
-        return $this->hasMany(Board::class, ['visibility_id' => 'id']);
+        return $this->hasMany(Board::class, ['status_id' => 'id']);
     }
 
     /**
@@ -64,7 +64,7 @@ class Visibility extends \yii\db\ActiveRecord
      */
     public function getPosts()
     {
-        return $this->hasMany(Post::class, ['visibility_id' => 'id']);
+        return $this->hasMany(Post::class, ['post_status_id' => 'id']);
     }
 
 }

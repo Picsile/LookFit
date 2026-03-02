@@ -47,6 +47,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
+
   if (to.meta.isAuthenticated && !userStore.isAccount && to.name !== 'login') {
     return { name: 'login' }
   }

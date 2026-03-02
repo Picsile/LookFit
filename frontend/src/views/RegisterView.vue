@@ -55,6 +55,7 @@ async function register(values: RegisterForm, { setErrors }: SubmissionContext):
       localStorage.setItem('token', data.token)
 
       await router.push({ name: 'home' })
+      return
     } else if (data.errorsValidation) {
       const errors = data.errorsValidation
 

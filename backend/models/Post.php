@@ -12,7 +12,7 @@ use Yii;
  * @property int $user_id
  * @property string $title
  * @property string $description
- * @property int $visibility_id
+ * @property int $post_status_id
  * @property string $created_at
  *
  * @property BoardPost[] $boardPosts
@@ -30,14 +30,15 @@ use Yii;
  * @property Post[] $outfits
  * @property PostCategory $postCategory
  * @property PostImage[] $postImages
+ * @property PostStatus $postStatus
  * @property PostTag[] $postTags
+ * @property ReasonDelete $reasonDelete
  * @property Tag[] $tags
  * @property PostType $type
  * @property User $user
  * @property User[] $users
  * @property User[] $users0
  * @property User[] $users1
- * @property Visibility $visibility
  * @property Wardrobe[] $wardrobes
  */
 class Post extends \yii\db\ActiveRecord
@@ -58,14 +59,14 @@ class Post extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type_id', 'user_id', 'title', 'description', 'visibility_id'], 'required'],
-            [['type_id', 'user_id', 'visibility_id'], 'integer'],
+            [['type_id', 'user_id', 'title', 'description', 'post_status_id'], 'required'],
+            [['type_id', 'user_id', 'post_status_id'], 'integer'],
             [['description'], 'string'],
             [['created_at'], 'safe'],
             [['title'], 'string', 'max' => 255],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PostType::class, 'targetAttribute' => ['type_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
-            [['visibility_id'], 'exist', 'skipOnError' => true, 'targetClass' => Visibility::class, 'targetAttribute' => ['visibility_id' => 'id']],
+            [['post_status_id'], 'exist', 'skipOnError' => true, 'targetClass' => PostStatus::class, 'targetAttribute' => ['post_status_id' => 'id']],
         ];
     }
 
@@ -80,7 +81,7 @@ class Post extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'title' => 'Title',
             'description' => 'Description',
-            'visibility_id' => 'Visibility ID',
+            'post_status_id' => 'Post Status ID',
             'created_at' => 'Created At',
         ];
     }
@@ -236,6 +237,16 @@ class Post extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[PostStatus]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPostStatus()
+    {
+        return $this->hasOne(PostStatus::class, ['id' => 'post_status_id']);
+    }
+
+    /**
      * Gets query for [[PostTags]].
      *
      * @return \yii\db\ActiveQuery
@@ -243,6 +254,16 @@ class Post extends \yii\db\ActiveRecord
     public function getPostTags()
     {
         return $this->hasMany(PostTag::class, ['post_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ReasonDelete]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReasonDelete()
+    {
+        return $this->hasOne(ReasonDelete::class, ['post_id' => 'id']);
     }
 
     /**
@@ -303,16 +324,6 @@ class Post extends \yii\db\ActiveRecord
     public function getUsers1()
     {
         return $this->hasMany(User::class, ['id' => 'user_id'])->viaTable('wardrobe', ['post_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Visibility]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getVisibility()
-    {
-        return $this->hasOne(Visibility::class, ['id' => 'visibility_id']);
     }
 
     /**
