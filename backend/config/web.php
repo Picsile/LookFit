@@ -15,8 +15,8 @@ $config = [
     'components' => [
         'request' => [
             'cookieValidationKey' => 'a',
-            'baseUrl' => '',
-            // 'baseUrl' => '/backend',
+            // 'baseUrl' => '',
+            'baseUrl' => '/backend',
 
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
@@ -50,24 +50,24 @@ $config = [
 
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
+            'enableStrictParsing' => false,
             'showScriptName' => false,
             'rules' => [
-                "POST backend/site/register" => "site/register",
-                "OPTIONS backend/site/register" => "site/options",
+                "POST site/register" => "site/register",
+                "OPTIONS site/register" => "site/options",
 
-                "POST backend/site/login" => "site/login",
-                "OPTIONS backend/site/login" => "site/options",
+                "POST site/login" => "site/login",
+                "OPTIONS site/login" => "site/options",
 
-                "GET backend/site/find-by-token" => "site/find-by-token",
-                "OPTIONS backend/site/find-by-token" => "site/options",
+                "GET site/find-by-token" => "site/find-by-token",
+                "OPTIONS site/find-by-token" => "site/options",
 
-                "GET backend/site/logout" => "site/logout",
-                "OPTIONS backend/site/logout" => "site/options",
+                "GET site/logout" => "site/logout",
+                "OPTIONS site/logout" => "site/options",
 
                 // User
-                "POST backend/account/public-thing" => "account/public-thing",
-                "OPTIONS backend/account/publicThing" => "account/options",
+                "POST backend/account/post/public-thing" => "backend/account/post/public-thing",
+                "OPTIONS backend/account/post/publicThing" => "backend/account/post/options",
             ],
         ],
     ],

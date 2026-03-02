@@ -71,14 +71,14 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
   formData.append('tags', values.tags)
 
   // Add links
-  links.value.forEach((link, i) => {
-    formData.append(`links[${i}]`, link)
-  })
+  for (let link of values.links) {
+    formData.append(`links[]`, link)
+  }
 
   // Add images
-  images.value.forEach((file) => {
-    formData.append('images[]', file)
-  })
+  for (let image of images.value) {
+    formData.append('images[]', image)
+  }
 
   try {
     isLoad.value = true
@@ -87,7 +87,6 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
     console.log(data)
 
     if (data.status == 'success') {
-      console.log('Успех')
     } else if (data.errorsValidation) {
       const errors = data.errorsValidation
 
@@ -112,10 +111,20 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
   <div class="flex justify-center w-screen pl-[var(--w-navbar)] pt-38.5">
     <div class="flex flex-col gap-8">
       <!-- Top -->
-      <div class="flex gap-8 items-center">
-        <ArrowBack path="/" />
-        <div>
-          <h3 class="text-40 text-xl">Публикация вещи</h3>
+      <div class="flex justify-between items-center">
+        <div class="flex gap-8 items-center">
+          <ArrowBack path="/" />
+          <div>
+            <h3 class="text-40 text-xl">Публикация вещи</h3>
+          </div>
+        </div>
+
+        <div class="bg-(image:--color-brend) p-0.5 pb-2 rounded-2xl w-fit">
+          <div class="relative flex bg-(--color-hover-input) p-0.5 rounded-[14px]">
+            <div class="bg-(image:--color-brend) text-sm text-white p-1.5 px-4 rounded-[12px]">Публичный</div>
+
+            <div class="text-sm text-black opacity-60 hover:opacity-80 p-1.5 px-4 rounded-[12px]">Приватный</div>
+          </div>
         </div>
       </div>
 
@@ -199,26 +208,50 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
             <Input v-bind="field" v-model="field.value" type="text" :errorMessage="errorMessage" label="Теги" />
           </Field>
 
-          <!-- Links -->
-          <div class="group flex flex-col">
-            <label class="label text-base mb-0.5 group-focus-within:text-indigo-500">Ссылки</label>
+          <!-- Visible -->
+          <!-- <div class="group flex flex-col">
+            <div class="flex flex-col">
+              <Field name="visible" type="radio" value="public" v-slot="{ field }">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" v-bind="field" class="rounded-none" />
+                  Публичный
+                </label>
+              </Field>
 
-            <div v-for="(link, index) in links" :key="index" class="flex gap-2 mb-4">
-              <input
-                type="text"
-                placeholder="https://"
-                class="w-full bg-(--color-input) px-5 py-2.5 rounded-2xl hover:bg-(--color-hover-input) peer focus:outline focus:outline-indigo-500"
-              />
-              <button
-                v-if="index !== 0"
-                type="button"
-                @click="removeLink(index)"
-                class="bg-(--color-input) p-2.5 rounded-2xl hover:bg-(--color-hover-input) focus:outline focus:outline-indigo-500 cursor-pointer"
-              >
-                <IconClose />
-              </button>
+              <Field name="visible" type="radio" value="private" v-slot="{ field }">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" v-bind="field" />
+                  Приватный
+                </label>
+              </Field>
             </div>
-          </div>
+          </div> -->
+
+          <!-- Links -->
+          <FieldArray name="links">
+            <div class="group flex flex-col">
+              <label class="label text-base mb-0.5 group-focus-within:text-indigo-500">Ссылки</label>
+
+              <div v-for="(link, index) in links" :key="index" class="flex gap-2 mb-4">
+                <Field :name="`links[${index}]`" v-slot="{ field, errorMessage }">
+                  <input
+                    v-bind="field"
+                    type="text"
+                    placeholder="https://"
+                    class="w-full bg-(--color-input) px-5 py-2.5 rounded-2xl hover:bg-(--color-hover-input) peer focus:outline focus:outline-indigo-500"
+                  />
+                </Field>
+                <button
+                  v-if="index !== 0"
+                  type="button"
+                  @click="removeLink(index)"
+                  class="bg-(--color-input) p-2.5 rounded-2xl hover:bg-(--color-hover-input) focus:outline focus:outline-indigo-500 cursor-pointer"
+                >
+                  <IconClose />
+                </button>
+              </div>
+            </div>
+          </FieldArray>
 
           <!-- Add links -->
           <button

@@ -50,7 +50,12 @@ export const authApi = {
 
 export const userApi = {
   async publicThing(formData: FormData) {
-    const response = await api.post('/account/public-thing', formData)
+    const response = await api.post('/account/post/public-thing', formData)
+    return response.data
+  },
+
+  async publicThing2() {
+    const response = await api.post('/account/post/public-thing')
     return response.data
   },
 }

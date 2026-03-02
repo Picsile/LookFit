@@ -2,18 +2,23 @@
 
 namespace app\modules\account\controllers;
 
+use app\models\Image;
 use app\models\Post;
+use app\models\PostImage;
+use app\models\PostType;
+use app\models\UploadForm;
 use app\modules\account\search\PostSearch;
-use yii\filters\auth\HttpBearerAuth;
-use yii\helpers\Json;
-use yii\web\NotFoundHttpException;
+use Yii;
 use yii\web\Response;
+use yii\filters\auth\HttpBearerAuth;
+use yii\web\NotFoundHttpException;
 use yii\rest\ActiveController;
+use yii\web\UploadedFile;
 
 /**
- * AccountController implements the CRUD actions for Post model.
+ * PostController implements the CRUD actions for Post model.
  */
-class AccountController extends ActiveController
+class PostController extends ActiveController
 {
     public $modelClass = '';
     public $enableCsrfValidation = false;
@@ -40,7 +45,7 @@ class AccountController extends ActiveController
 
         $auth = [
             'class' => HttpBearerAuth::class,
-            'except' => ['options', "login", "register"],
+            'except' => ['options'],
         ];
         // Re-add authentication filter
         $behaviors['authenticator'] = $auth;
@@ -63,16 +68,6 @@ class AccountController extends ActiveController
     }
 
     /**
-     * Handles CORS preflight requests
-     */
-    public function actionOptions()
-    {
-        if (\Yii::$app->getRequest()->getMethod() === 'OPTIONS') {
-            \Yii::$app->getResponse()->setStatusCode(200);
-        }
-    }
-
-    /**
      * Lists all Post models.
      *
      * @return string
@@ -86,6 +81,47 @@ class AccountController extends ActiveController
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    /**
+     * Creates a new Post model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionPublicThing()
+    {
+        $post = new Post();
+        $uploadForm = new UploadForm();
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($data = Yii::$app->request->post()) {
+            // Post
+            $post->type_id = 1;
+            $post->user_id = Yii::$app->user->id;
+            $post->title = $data['title'];
+            $post->description = $data['description'];
+            $post->status_id = 1;
+
+            // Images
+            $images = UploadedFile::getInstancesByName('images');
+
+            foreach ($image as $images) {
+                $postImageModel = new PostImage();
+                $imageModel = new Image();
+                
+                
+            }
+
+            return ['status' => 'success', '1' => $images];
+
+
+            // Tags
+
+
+            return ['status' => 'success', '1' => $post];
+        }
+        return ['status' => 'error', 'message' => 'Ошибка при получении данных', 'post' => Yii::$app->request->post()];
     }
 
     /**
@@ -106,13 +142,55 @@ class AccountController extends ActiveController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionPublicThing()
+    public function actionCreate()
     {
-        return ['status' => 'success'];
+        $model = new Post();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
 
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+
+    /**
+     * Updates an existing Post model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id ID
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Deletes an existing Post model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $id ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
     }
 
     /**
