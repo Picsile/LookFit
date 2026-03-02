@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: MySQL-8.4
--- Время создания: Фев 26 2026 г., 17:04
+-- Время создания: Мар 02 2026 г., 19:33
 -- Версия сервера: 8.4.4
 -- Версия PHP: 8.3.14
 
@@ -31,7 +31,7 @@ CREATE TABLE `board` (
   `id` int UNSIGNED NOT NULL,
   `user_id` int UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
-  `visibility_id` int UNSIGNED NOT NULL,
+  `status_id` int UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -114,9 +114,18 @@ CREATE TABLE `generation_item` (
 
 CREATE TABLE `image` (
   `id` int UNSIGNED NOT NULL,
-  `path` int NOT NULL,
+  `path` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Дамп данных таблицы `image`
+--
+
+INSERT INTO `image` (`id`, `path`, `created_at`) VALUES
+(18, 'Без названия (8).jpg', '2026-03-02 16:24:25'),
+(19, 'Без названия (8).jpg', '2026-03-02 16:24:51'),
+(20, 'Без названия (9).jpg', '2026-03-02 16:31:49');
 
 -- --------------------------------------------------------
 
@@ -196,6 +205,15 @@ CREATE TABLE `post` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+--
+-- Дамп данных таблицы `post`
+--
+
+INSERT INTO `post` (`id`, `type_id`, `user_id`, `title`, `description`, `post_status_id`, `created_at`) VALUES
+(79, 1, 8, 'Свитер вязаный оверсайз джемпер теплый', 'Свитер вязаный оверсайз джемпер теплый', 1, '2026-03-02 16:24:25'),
+(80, 1, 8, 'Свитер вязаный оверсайз джемпер теплый', 'Свитер вязаный оверсайз джемпер теплый', 1, '2026-03-02 16:24:51'),
+(81, 1, 8, 'Штаны оверсайз', 'Штаны оверсайз', 1, '2026-03-02 16:31:49');
+
 -- --------------------------------------------------------
 
 --
@@ -218,6 +236,15 @@ CREATE TABLE `post_image` (
   `image_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+--
+-- Дамп данных таблицы `post_image`
+--
+
+INSERT INTO `post_image` (`post_id`, `image_id`) VALUES
+(79, 18),
+(80, 19),
+(81, 20);
+
 -- --------------------------------------------------------
 
 --
@@ -228,6 +255,16 @@ CREATE TABLE `post_status` (
   `id` int UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Дамп данных таблицы `post_status`
+--
+
+INSERT INTO `post_status` (`id`, `title`) VALUES
+(1, 'Public'),
+(2, 'Private'),
+(3, 'Deleted user'),
+(4, 'Deleted admin');
 
 -- --------------------------------------------------------
 
@@ -240,6 +277,25 @@ CREATE TABLE `post_tag` (
   `tag_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+--
+-- Дамп данных таблицы `post_tag`
+--
+
+INSERT INTO `post_tag` (`post_id`, `tag_id`) VALUES
+(79, 4),
+(80, 4),
+(79, 5),
+(80, 5),
+(79, 6),
+(80, 6),
+(81, 6),
+(79, 7),
+(80, 7),
+(79, 8),
+(80, 8),
+(81, 9),
+(81, 10);
+
 -- --------------------------------------------------------
 
 --
@@ -251,6 +307,14 @@ CREATE TABLE `post_type` (
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+--
+-- Дамп данных таблицы `post_type`
+--
+
+INSERT INTO `post_type` (`id`, `title`) VALUES
+(1, 'Thing'),
+(2, 'Outfit');
+
 -- --------------------------------------------------------
 
 --
@@ -260,6 +324,19 @@ CREATE TABLE `post_type` (
 CREATE TABLE `ratio` (
   `id` int UNSIGNED NOT NULL,
   `value` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `reason_delete`
+--
+
+CREATE TABLE `reason_delete` (
+  `post_id` int UNSIGNED NOT NULL,
+  `reason` text NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `delete_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -303,6 +380,21 @@ CREATE TABLE `tag` (
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+--
+-- Дамп данных таблицы `tag`
+--
+
+INSERT INTO `tag` (`id`, `title`) VALUES
+(2, 'asd'),
+(3, 'фыв'),
+(4, 'свитер'),
+(5, 'вязаный'),
+(6, 'оверсайз'),
+(7, 'джемпер'),
+(8, 'теплый'),
+(9, 'штаны'),
+(10, '1');
+
 -- --------------------------------------------------------
 
 --
@@ -328,7 +420,8 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id`, `username`, `login`, `password`, `email`, `phone`, `avatar_path`, `background_path`, `role_id`, `auth_key`) VALUES
 (7, 'Picsile', 'Picsile', '$2y$13$3IDyttjFCdoN1IipUo/rZuRaSb6TS2bQQl281G7lE1soaX68or4T2', 'picsile23@gmail.com', NULL, NULL, NULL, 1, 'qB98dnhfa70VTevK_Gke0jJ-kcxnu3GM'),
-(8, 'q', 'q', '$2y$13$ZKmXLeNwYEHePvYW7YWtqelwV9DRJceBhkz9AxS3oe.34vZNIvn.q', 'q@q.com', NULL, NULL, NULL, 1, '_MRlqDsHnF92waXDOqViFgYmHc2qN5gw');
+(8, 'q', 'q', '$2y$13$ZKmXLeNwYEHePvYW7YWtqelwV9DRJceBhkz9AxS3oe.34vZNIvn.q', 'q@q.com', NULL, NULL, NULL, 1, '_MRlqDsHnF92waXDOqViFgYmHc2qN5gw'),
+(9, 'qq', 'qq', '$2y$13$7jddLpWv5GYrvE7NNKYlMelTsqJ06IbnZnHalzQHoCgqrz8ljg/ya', 'qq@q.com', NULL, NULL, NULL, 1, 'VlUTtyRctPmfqPANcw2s8dwD7g6RuYwj');
 
 -- --------------------------------------------------------
 
@@ -351,7 +444,7 @@ CREATE TABLE `wardrobe` (
 ALTER TABLE `board`
   ADD PRIMARY KEY (`id`),
   ADD KEY `board_ibfk_1` (`user_id`),
-  ADD KEY `board_ibfk_2` (`visibility_id`);
+  ADD KEY `board_ibfk_2` (`status_id`);
 
 --
 -- Индексы таблицы `board_post`
@@ -388,7 +481,7 @@ ALTER TABLE `generation`
 --
 ALTER TABLE `generation_image`
   ADD PRIMARY KEY (`generation_id`,`image_id`),
-  ADD KEY `generation_image_ibfk_2` (`image_id`);
+  ADD KEY `image_id` (`image_id`);
 
 --
 -- Индексы таблицы `generation_item`
@@ -485,6 +578,13 @@ ALTER TABLE `ratio`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `reason_delete`
+--
+ALTER TABLE `reason_delete`
+  ADD PRIMARY KEY (`post_id`),
+  ADD KEY `reason_delete_ibfk_2` (`user_id`);
+
+--
 -- Индексы таблицы `resolution`
 --
 ALTER TABLE `resolution`
@@ -545,7 +645,7 @@ ALTER TABLE `generation`
 -- AUTO_INCREMENT для таблицы `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT для таблицы `link`
@@ -557,19 +657,19 @@ ALTER TABLE `link`
 -- AUTO_INCREMENT для таблицы `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT для таблицы `post_status`
 --
 ALTER TABLE `post_status`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `post_type`
 --
 ALTER TABLE `post_type`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `ratio`
@@ -593,13 +693,13 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT для таблицы `tag`
 --
 ALTER TABLE `tag`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -610,7 +710,7 @@ ALTER TABLE `user`
 --
 ALTER TABLE `board`
   ADD CONSTRAINT `board_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `board_ibfk_2` FOREIGN KEY (`visibility_id`) REFERENCES `post_status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `board_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `post_status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `board_post`
@@ -694,8 +794,8 @@ ALTER TABLE `post_category`
 -- Ограничения внешнего ключа таблицы `post_image`
 --
 ALTER TABLE `post_image`
-  ADD CONSTRAINT `post_image_ibfk_1` FOREIGN KEY (`image_id`) REFERENCES `image` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `post_image_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `post_image_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `post_image_ibfk_3` FOREIGN KEY (`image_id`) REFERENCES `image` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `post_tag`
@@ -703,6 +803,13 @@ ALTER TABLE `post_image`
 ALTER TABLE `post_tag`
   ADD CONSTRAINT `post_tag_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `post_tag_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `reason_delete`
+--
+ALTER TABLE `reason_delete`
+  ADD CONSTRAINT `reason_delete_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `reason_delete_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `user`
