@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://localhost.local/backend',
+  // baseURL: 'https://localhost.local/backend',
+  baseURL: '/backend',
 })
 
 // Автоматически подставляем токен
@@ -12,10 +13,8 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`
   }
 
-  if (config.data instanceof FormData) {
-    delete config.headers['Content-Type']
-  } else {
-    config.headers['Content-Type'] = 'application/json'
+  if (!('Content-Type' in config.headers)) {
+    config.headers['Content-Type'] = 'application/json'    
   }
 
   return config
@@ -50,12 +49,13 @@ export const authApi = {
 
 export const userApi = {
   async publicThing(formData: FormData) {
-    const response = await api.post('/account/post/public-thing', formData)
-    return response.data
-  },
 
-  async publicThing2() {
-    const response = await api.post('/account/post/public-thing')
+    const response = await api.post('/account/post/public-thing', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    }
+    )
     return response.data
   },
 }

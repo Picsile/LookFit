@@ -12,6 +12,16 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      // Все запросы, начинающиеся с /api, будут перенаправлены
+      '/backend': {
+        target: 'http://localhost', // Адрес твоего сервера
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, ''), // Удаляет /api из пути перед отправкой
+      },
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

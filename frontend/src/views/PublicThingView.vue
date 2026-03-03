@@ -6,9 +6,10 @@ import IconAddSimple from '@/components/icons/IconAddSimple.vue'
 import IconClose from '@/components/icons/iconClose.vue'
 import Input from '@/components/Input.vue'
 import Textarea from '@/components/Textarea.vue'
-import router from '@/router'
-import { Field, Form, type SubmissionContext } from 'vee-validate'
+
+import { Field, FieldArray, Form, type SubmissionContext } from 'vee-validate'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface PostData {
   visible: string
@@ -17,6 +18,8 @@ interface PostData {
   tags: string
   links: [string]
 }
+
+const router = useRouter()
 
 // Images
 const images = ref<File[]>([])
@@ -136,7 +139,8 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
     const data = await userApi.publicThing(formData)
 
     if (data.status == 'success') {
-      await router.push({ name: 'home' })
+      console.log(data)
+      // await router.push({ name: 'home' })
       return
     } else if (data.errorsValidation) {
       const errors = data.errorsValidation
@@ -163,7 +167,7 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
     <Form
       @submit="publicThing"
       :validation-schema="publicThingValidation"
-      :initial-values="{ visible: 'public' }"
+      :initial-values="{ visible: 'public', links: [''] }"
       v-slot="{ setErrors }"
       class="flex flex-col gap-8"
     >
@@ -284,15 +288,16 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
           </Field>
 
           <!-- Links -->
-          <FieldArray name="links">
+          <FieldArray name="links" v-slot="{ fields, push, remove }">
             <div class="group flex flex-col">
               <label class="label text-base mb-0.5 group-focus-within:text-indigo-500">Ссылки</label>
 
-              <div v-for="(link, index) in links" :key="index" class="flex gap-2 mb-4">
+              <div v-for="(linkField, index) in fields" :key="linkField.key" class="flex gap-2 mb-4">
                 <Field :name="`links[${index}]`" v-slot="{ field, errorMessage }">
                   <div class="flex flex-col w-full">
                     <input
                       v-bind="field"
+                      v-model="field.value"
                       type="text"
                       placeholder="https://"
                       class="w-full bg-(--color-input) px-5 py-2.5 rounded-2xl hover:bg-(--color-hover-input) peer focus:outline focus:outline-indigo-500"
@@ -305,24 +310,24 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
                 <button
                   v-if="index !== 0"
                   type="button"
-                  @click="removeLink(index)"
+                  @click="remove(index)"
                   class="bg-(--color-input) p-2.5 rounded-2xl hover:bg-(--color-hover-input) focus:outline focus:outline-indigo-500 cursor-pointer"
                 >
                   <IconClose />
                 </button>
               </div>
             </div>
-          </FieldArray>
 
-          <!-- Add links -->
-          <button
-            type="button"
-            @click="addLink"
-            class="flex justify-center gap-1 w-full bg-(--color-input) py-2.5 rounded-2xl -mt-4 hover:bg-(--color-hover-input) focus:outline focus:outline-indigo-500 cursor-pointer"
-          >
-            <IconAddSimple width="21px" />
-            <span>Добавить ссылку</span>
-          </button>
+            <!-- Add links -->
+            <button
+              type="button"
+              @click="push('')"
+              class="flex justify-center gap-1 w-full bg-(--color-input) py-2.5 rounded-2xl -mt-4 hover:bg-(--color-hover-input) focus:outline focus:outline-indigo-500 cursor-pointer"
+            >
+              <IconAddSimple width="21px" />
+              <span>Добавить ссылку</span>
+            </button>
+          </FieldArray>
 
           <!-- Btn send -->
           <button

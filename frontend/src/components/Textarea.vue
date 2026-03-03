@@ -2,7 +2,7 @@
 const props = defineProps<{
   name: string
   type: 'text'
-  modelValue: string
+  modelValue?: string
 
   label: string
   placeholder?: string

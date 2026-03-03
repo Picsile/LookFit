@@ -10,13 +10,13 @@ use Yii;
  * @property int $id
  * @property int $user_id
  * @property string $title
- * @property int $visibility_id
+ * @property int $status_id
  * @property string $created_at
  *
  * @property BoardPost[] $boardPosts
  * @property Post[] $posts
+ * @property PostStatus $status
  * @property User $user
- * @property Visibility $visibility
  */
 class Board extends \yii\db\ActiveRecord
 {
@@ -36,12 +36,12 @@ class Board extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'title', 'visibility_id'], 'required'],
-            [['user_id', 'visibility_id'], 'integer'],
+            [['user_id', 'title', 'status_id'], 'required'],
+            [['user_id', 'status_id'], 'integer'],
             [['created_at'], 'safe'],
             [['title'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
-            [['visibility_id'], 'exist', 'skipOnError' => true, 'targetClass' => Visibility::class, 'targetAttribute' => ['visibility_id' => 'id']],
+            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => PostStatus::class, 'targetAttribute' => ['status_id' => 'id']],
         ];
     }
 
@@ -54,7 +54,7 @@ class Board extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ID',
             'title' => 'Title',
-            'visibility_id' => 'Visibility ID',
+            'status_id' => 'Status ID',
             'created_at' => 'Created At',
         ];
     }
@@ -80,6 +80,16 @@ class Board extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Status]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getStatus()
+    {
+        return $this->hasOne(PostStatus::class, ['id' => 'status_id']);
+    }
+
+    /**
      * Gets query for [[User]].
      *
      * @return \yii\db\ActiveQuery
@@ -87,16 +97,6 @@ class Board extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
-    }
-
-    /**
-     * Gets query for [[Visibility]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getVisibility()
-    {
-        return $this->hasOne(Visibility::class, ['id' => 'visibility_id']);
     }
 
 }

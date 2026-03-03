@@ -3,8 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
-use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "user".
@@ -28,10 +26,11 @@ use yii\web\IdentityInterface;
  * @property Post[] $posts0
  * @property Post[] $posts1
  * @property Post[] $posts2
+ * @property ReasonDelete[] $reasonDeletes
  * @property Role $role
  * @property Wardrobe[] $wardrobes
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends \yii\db\ActiveRecord
 {
 
 
@@ -56,6 +55,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['username', 'login', 'password', 'email', 'phone', 'avatar_path', 'background_path', 'auth_key'], 'string', 'max' => 255],
             [['login'], 'unique'],
             [['email'], 'unique'],
+            [['login', 'email'], 'unique', 'targetAttribute' => ['login', 'email']],
             [['role_id'], 'exist', 'skipOnError' => true, 'targetClass' => Role::class, 'targetAttribute' => ['role_id' => 'id']],
         ];
     }
@@ -160,6 +160,16 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Gets query for [[ReasonDeletes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReasonDeletes()
+    {
+        return $this->hasMany(ReasonDelete::class, ['user_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Role]].
      *
      * @return \yii\db\ActiveQuery
@@ -179,64 +189,4 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Wardrobe::class, ['user_id' => 'id']);
     }
 
-    public static function findIdentity($id)
-    {
-        return static::findOne($id);
-    }
-
-    /**
-     * Finds an identity by the given token.
-     *
-     * @param string $token the token to be looked for
-     * @return IdentityInterface|null the identity object that matches the given token.
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        return static::findOne(['auth_key' => $token]);
-    }
-
-    /**
-     * @return int|string current user ID
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return string|null current user auth key
-     */
-    public function getAuthKey()
-    {
-        return $this->auth_key;
-    }
-
-    /**
-     * @param string $authKey
-     * @return bool|null if auth key is valid for current user
-     */
-    public function validateAuthKey($authKey)
-    {
-        return $this->getAuthKey() === $authKey;
-    }
-
-    public static function findByemail($email): User | null
-    {
-        return static::findOne(['email' => $email]);
-    }
-
-    public function validatePassword($password): bool
-    {
-        return Yii::$app->security->validatePassword($password, $this->password);
-    }
-
-    public function getIsAccount()
-    {
-        return $this->role_id == 1;
-    }
-
-    public function getIsAdmin()
-    {
-        return $this->role_id == 2;
-    }
 }

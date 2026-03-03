@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Хост: MySQL-8.4
--- Время создания: Мар 02 2026 г., 19:33
--- Версия сервера: 8.4.4
--- Версия PHP: 8.3.14
+-- Хост: 127.0.0.1:3306
+-- Время создания: Мар 03 2026 г., 14:11
+-- Версия сервера: 10.8.4-MariaDB-log
+-- Версия PHP: 8.1.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,11 +28,11 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `board` (
-  `id` int UNSIGNED NOT NULL,
-  `user_id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
-  `status_id` int UNSIGNED NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `status_id` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -42,8 +42,8 @@ CREATE TABLE `board` (
 --
 
 CREATE TABLE `board_post` (
-  `board_id` int UNSIGNED NOT NULL,
-  `post_id` int UNSIGNED NOT NULL
+  `board_id` int(10) UNSIGNED NOT NULL,
+  `post_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -53,8 +53,8 @@ CREATE TABLE `board_post` (
 --
 
 CREATE TABLE `category` (
-  `id` int UNSIGNED NOT NULL,
-  `parent_id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
+  `parent_id` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -65,8 +65,8 @@ CREATE TABLE `category` (
 --
 
 CREATE TABLE `favorites` (
-  `user_id` int UNSIGNED NOT NULL,
-  `post_id` int UNSIGNED NOT NULL
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `post_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -76,12 +76,12 @@ CREATE TABLE `favorites` (
 --
 
 CREATE TABLE `generation` (
-  `id` int UNSIGNED NOT NULL,
-  `user_id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
   `prompt` text NOT NULL,
-  `resolution_id` int UNSIGNED NOT NULL,
-  `ratio_id` int UNSIGNED NOT NULL,
-  `created_at` int NOT NULL
+  `resolution_id` int(10) UNSIGNED NOT NULL,
+  `ratio_id` int(10) UNSIGNED NOT NULL,
+  `created_at` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -91,8 +91,8 @@ CREATE TABLE `generation` (
 --
 
 CREATE TABLE `generation_image` (
-  `generation_id` int UNSIGNED NOT NULL,
-  `image_id` int UNSIGNED NOT NULL
+  `generation_id` int(10) UNSIGNED NOT NULL,
+  `image_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -102,8 +102,8 @@ CREATE TABLE `generation_image` (
 --
 
 CREATE TABLE `generation_item` (
-  `generation_id` int UNSIGNED NOT NULL,
-  `post_id` int UNSIGNED NOT NULL
+  `generation_id` int(10) UNSIGNED NOT NULL,
+  `post_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -113,9 +113,9 @@ CREATE TABLE `generation_item` (
 --
 
 CREATE TABLE `image` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `path` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
@@ -125,7 +125,8 @@ CREATE TABLE `image` (
 INSERT INTO `image` (`id`, `path`, `created_at`) VALUES
 (18, 'Без названия (8).jpg', '2026-03-02 16:24:25'),
 (19, 'Без названия (8).jpg', '2026-03-02 16:24:51'),
-(20, 'Без названия (9).jpg', '2026-03-02 16:31:49');
+(20, 'Без названия (9).jpg', '2026-03-02 16:31:49'),
+(21, 'Screenshot-2024-07-20-002957-1024x479.png', '2026-03-03 10:09:57');
 
 -- --------------------------------------------------------
 
@@ -134,8 +135,8 @@ INSERT INTO `image` (`id`, `path`, `created_at`) VALUES
 --
 
 CREATE TABLE `item_link` (
-  `post_id` int UNSIGNED NOT NULL,
-  `link_id` int UNSIGNED NOT NULL
+  `post_id` int(10) UNSIGNED NOT NULL,
+  `link_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -145,8 +146,8 @@ CREATE TABLE `item_link` (
 --
 
 CREATE TABLE `like` (
-  `user_id` int UNSIGNED NOT NULL,
-  `post_id` int UNSIGNED NOT NULL
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `post_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -156,8 +157,8 @@ CREATE TABLE `like` (
 --
 
 CREATE TABLE `link` (
-  `id` int UNSIGNED NOT NULL,
-  `url` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
+  `id` int(10) UNSIGNED NOT NULL,
+  `url` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -168,7 +169,7 @@ CREATE TABLE `link` (
 
 CREATE TABLE `migration` (
   `version` varchar(180) NOT NULL,
-  `apply_time` int DEFAULT NULL
+  `apply_time` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
@@ -185,8 +186,8 @@ INSERT INTO `migration` (`version`, `apply_time`) VALUES
 --
 
 CREATE TABLE `outfit_item` (
-  `outfit_id` int UNSIGNED NOT NULL,
-  `item_id` int UNSIGNED NOT NULL
+  `outfit_id` int(10) UNSIGNED NOT NULL,
+  `item_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -196,33 +197,15 @@ CREATE TABLE `outfit_item` (
 --
 
 CREATE TABLE `post` (
-  `id` int UNSIGNED NOT NULL,
-  `type_id` int UNSIGNED NOT NULL,
-  `user_id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
+  `type_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `post_status_id` int UNSIGNED NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
---
--- Дамп данных таблицы `post`
---
-
-INSERT INTO `post` (`id`, `type_id`, `user_id`, `title`, `description`, `post_status_id`, `created_at`) VALUES
-(79, 1, 8, 'Свитер вязаный оверсайз джемпер теплый', 'Свитер вязаный оверсайз джемпер теплый', 1, '2026-03-02 16:24:25'),
-(80, 1, 8, 'Свитер вязаный оверсайз джемпер теплый', 'Свитер вязаный оверсайз джемпер теплый', 1, '2026-03-02 16:24:51'),
-(81, 1, 8, 'Штаны оверсайз', 'Штаны оверсайз', 1, '2026-03-02 16:31:49');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `post_category`
---
-
-CREATE TABLE `post_category` (
-  `post_id` int UNSIGNED NOT NULL,
-  `category_id` int UNSIGNED NOT NULL
+  `category_id` int(10) UNSIGNED NOT NULL,
+  `post_visible_id` int(10) UNSIGNED NOT NULL,
+  `post_status_id` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -232,18 +215,9 @@ CREATE TABLE `post_category` (
 --
 
 CREATE TABLE `post_image` (
-  `post_id` int UNSIGNED NOT NULL,
-  `image_id` int UNSIGNED NOT NULL
+  `post_id` int(10) UNSIGNED NOT NULL,
+  `image_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
---
--- Дамп данных таблицы `post_image`
---
-
-INSERT INTO `post_image` (`post_id`, `image_id`) VALUES
-(79, 18),
-(80, 19),
-(81, 20);
 
 -- --------------------------------------------------------
 
@@ -252,7 +226,7 @@ INSERT INTO `post_image` (`post_id`, `image_id`) VALUES
 --
 
 CREATE TABLE `post_status` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -262,9 +236,8 @@ CREATE TABLE `post_status` (
 
 INSERT INTO `post_status` (`id`, `title`) VALUES
 (1, 'Public'),
-(2, 'Private'),
-(3, 'Deleted user'),
-(4, 'Deleted admin');
+(2, 'Deleted user'),
+(3, 'Deleted admin');
 
 -- --------------------------------------------------------
 
@@ -273,28 +246,9 @@ INSERT INTO `post_status` (`id`, `title`) VALUES
 --
 
 CREATE TABLE `post_tag` (
-  `post_id` int UNSIGNED NOT NULL,
-  `tag_id` int UNSIGNED NOT NULL
+  `post_id` int(10) UNSIGNED NOT NULL,
+  `tag_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
---
--- Дамп данных таблицы `post_tag`
---
-
-INSERT INTO `post_tag` (`post_id`, `tag_id`) VALUES
-(79, 4),
-(80, 4),
-(79, 5),
-(80, 5),
-(79, 6),
-(80, 6),
-(81, 6),
-(79, 7),
-(80, 7),
-(79, 8),
-(80, 8),
-(81, 9),
-(81, 10);
 
 -- --------------------------------------------------------
 
@@ -303,7 +257,7 @@ INSERT INTO `post_tag` (`post_id`, `tag_id`) VALUES
 --
 
 CREATE TABLE `post_type` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -318,11 +272,30 @@ INSERT INTO `post_type` (`id`, `title`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `post_visible`
+--
+
+CREATE TABLE `post_visible` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Дамп данных таблицы `post_visible`
+--
+
+INSERT INTO `post_visible` (`id`, `title`) VALUES
+(1, 'Public'),
+(2, 'Private');
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `ratio`
 --
 
 CREATE TABLE `ratio` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `value` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -333,10 +306,10 @@ CREATE TABLE `ratio` (
 --
 
 CREATE TABLE `reason_delete` (
-  `post_id` int UNSIGNED NOT NULL,
+  `post_id` int(10) UNSIGNED NOT NULL,
   `reason` text NOT NULL,
-  `user_id` int UNSIGNED NOT NULL,
-  `delete_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `delete_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -346,7 +319,7 @@ CREATE TABLE `reason_delete` (
 --
 
 CREATE TABLE `resolution` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `value` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -357,7 +330,7 @@ CREATE TABLE `resolution` (
 --
 
 CREATE TABLE `role` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -376,7 +349,7 @@ INSERT INTO `role` (`id`, `title`) VALUES
 --
 
 CREATE TABLE `tag` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -393,7 +366,10 @@ INSERT INTO `tag` (`id`, `title`) VALUES
 (7, 'джемпер'),
 (8, 'теплый'),
 (9, 'штаны'),
-(10, '1');
+(10, '1'),
+(11, 'a'),
+(12, 'as'),
+(13, 'ф');
 
 -- --------------------------------------------------------
 
@@ -402,7 +378,7 @@ INSERT INTO `tag` (`id`, `title`) VALUES
 --
 
 CREATE TABLE `user` (
-  `id` int UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `username` varchar(255) NOT NULL,
   `login` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -410,7 +386,7 @@ CREATE TABLE `user` (
   `phone` varchar(255) DEFAULT NULL,
   `avatar_path` varchar(255) DEFAULT NULL,
   `background_path` varchar(255) DEFAULT NULL,
-  `role_id` int UNSIGNED NOT NULL DEFAULT '1',
+  `role_id` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `auth_key` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -430,8 +406,8 @@ INSERT INTO `user` (`id`, `username`, `login`, `password`, `email`, `phone`, `av
 --
 
 CREATE TABLE `wardrobe` (
-  `user_id` int UNSIGNED NOT NULL,
-  `post_id` int UNSIGNED NOT NULL
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `post_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
@@ -536,13 +512,8 @@ ALTER TABLE `post`
   ADD PRIMARY KEY (`id`),
   ADD KEY `type_id` (`type_id`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `visibility_id` (`post_status_id`);
-
---
--- Индексы таблицы `post_category`
---
-ALTER TABLE `post_category`
-  ADD PRIMARY KEY (`post_id`),
+  ADD KEY `visibility_id` (`post_status_id`),
+  ADD KEY `post_visible_id` (`post_visible_id`),
   ADD KEY `category_id` (`category_id`);
 
 --
@@ -569,6 +540,12 @@ ALTER TABLE `post_tag`
 -- Индексы таблицы `post_type`
 --
 ALTER TABLE `post_type`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `post_visible`
+--
+ALTER TABLE `post_visible`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -627,79 +604,85 @@ ALTER TABLE `wardrobe`
 -- AUTO_INCREMENT для таблицы `board`
 --
 ALTER TABLE `board`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `category`
 --
 ALTER TABLE `category`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `generation`
 --
 ALTER TABLE `generation`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `image`
 --
 ALTER TABLE `image`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT для таблицы `link`
 --
 ALTER TABLE `link`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
 -- AUTO_INCREMENT для таблицы `post_status`
 --
 ALTER TABLE `post_status`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `post_type`
 --
 ALTER TABLE `post_type`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT для таблицы `post_visible`
+--
+ALTER TABLE `post_visible`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `ratio`
 --
 ALTER TABLE `ratio`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `resolution`
 --
 ALTER TABLE `resolution`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `role`
 --
 ALTER TABLE `role`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `tag`
 --
 ALTER TABLE `tag`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -781,14 +764,9 @@ ALTER TABLE `outfit_item`
 ALTER TABLE `post`
   ADD CONSTRAINT `post_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `post_type` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `post_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `post_ibfk_3` FOREIGN KEY (`post_status_id`) REFERENCES `post_status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `post_category`
---
-ALTER TABLE `post_category`
-  ADD CONSTRAINT `post_category_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `post_category_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `post_ibfk_3` FOREIGN KEY (`post_status_id`) REFERENCES `post_status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `post_ibfk_4` FOREIGN KEY (`post_visible_id`) REFERENCES `post_visible` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `post_ibfk_5` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `post_image`

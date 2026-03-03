@@ -50,7 +50,7 @@ $config = [
 
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => false,
+            'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
                 "POST site/register" => "site/register",
@@ -66,8 +66,8 @@ $config = [
                 "OPTIONS site/logout" => "site/options",
 
                 // User
-                "POST backend/account/post/public-thing" => "backend/account/post/public-thing",
-                "OPTIONS backend/account/post/publicThing" => "backend/account/post/options",
+                "POST account/post/public-thing" => "account/post/public-thing",
+                "OPTIONS account/post/publicThing" => "account/post/options",
             ],
         ],
     ],

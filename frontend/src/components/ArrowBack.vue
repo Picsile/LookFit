@@ -8,7 +8,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <route-link :to="path" class="btn-default bg-(--color-main-panel)">
+  <router-link :to="path" class="btn-default bg-(--color-main-panel)">
     <IconArrowBack />
-  </route-link>
+  </router-link>
 </template>

@@ -13,7 +13,7 @@ use Yii;
  *
  * @property Category[] $categories
  * @property Category $parent
- * @property PostCategory[] $postCategories
+ * @property Post[] $posts
  */
 class Category extends \yii\db\ActiveRecord
 {
@@ -73,13 +73,13 @@ class Category extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[PostCategories]].
+     * Gets query for [[Posts]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPostCategories()
+    public function getPosts()
     {
-        return $this->hasMany(PostCategory::class, ['category_id' => 'id']);
+        return $this->hasMany(Post::class, ['category_id' => 'id']);
     }
 
 }

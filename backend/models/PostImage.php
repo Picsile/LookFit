@@ -34,8 +34,8 @@ class PostImage extends \yii\db\ActiveRecord
             [['post_id', 'image_id'], 'required'],
             [['post_id', 'image_id'], 'integer'],
             [['post_id', 'image_id'], 'unique', 'targetAttribute' => ['post_id', 'image_id']],
-            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
             [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::class, 'targetAttribute' => ['post_id' => 'id']],
+            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
         ];
     }
 

@@ -105,6 +105,8 @@ class PostController extends ActiveController
             $post->user_id = Yii::$app->user->id;
             $post->title = $data['title'];
             $post->description = $data['description'];
+            $post->post_visible = $data['visible'] == 'public' ? 1 : 2;
+            $post->post_status_id = $data['visible'] == 'public' ? 1 : 2;
             $post->post_status_id = $data['visible'] == 'public' ? 1 : 2;
 
             if ($post->save()) {
