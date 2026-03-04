@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { userApi } from '@/api/api'
+import { accountApi } from '@/api/api'
 import ArrowBack from '@/components/ArrowBack.vue'
 import IconAddImage from '@/components/icons/IconAddImage.vue'
 import IconAddSimple from '@/components/icons/IconAddSimple.vue'
@@ -17,6 +17,14 @@ interface PostData {
   description: string
   tags: string
   links: [string]
+}
+
+const postData: PostData = {
+  visible: 'public',
+  title: 'Штаны оверсайз',
+  description: 'Бла бла',
+  tags: 'штаны кофта y2k',
+  links: ['https://'],
 }
 
 const router = useRouter()
@@ -57,14 +65,6 @@ const removeImage = (index: number) => {
 
 // Links
 const links = ref<string[]>([''])
-
-const addLink = () => {
-  links.value.push('')
-}
-
-const removeLink = (index: number) => {
-  links.value.splice(index, 1)
-}
 
 // Validation
 const publicThingValidation = {
@@ -136,11 +136,11 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
   try {
     isLoad.value = true
 
-    const data = await userApi.publicThing(formData)
+    const data = await accountApi.publicThing(formData)
 
     if (data.status == 'success') {
       console.log(data)
-      // await router.push({ name: 'home' })
+      await router.push({ name: 'home' })
       return
     } else if (data.errorsValidation) {
       const errors = data.errorsValidation
@@ -167,7 +167,7 @@ const publicThing = async (values: PostData, { setErrors }: SubmissionContext): 
     <Form
       @submit="publicThing"
       :validation-schema="publicThingValidation"
-      :initial-values="{ visible: 'public', links: [''] }"
+      :initial-values="postData"
       v-slot="{ setErrors }"
       class="flex flex-col gap-8"
     >

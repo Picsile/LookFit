@@ -1,147 +1,43 @@
 <script setup lang="ts">
-import Header from '../components/Header.vue'
-import Navbar from '../components/Navbar.vue'
+import { guestApi } from '@/api/api'
+import HomePost from '@/components/HomePost.vue'
+import LoaderCircle from '@/components/LoaderCircle.vue'
+import { onMounted, reactive, ref } from 'vue'
+
+const posts = ref<any[]>([])
+
+const isLoad = ref<boolean>(false)
+
+const getPosts = async () => {
+  try {
+    isLoad.value = true
+    const data = await guestApi.getSomePosts()
+
+    if (data.status == 'success') {
+      // Получили данные
+      posts.value = data.posts
+      return
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isLoad.value = false
+  }
+}
+
+onMounted(() => {
+  getPosts()
+})
 </script>
 
 <template>
   <div class="pl-[var(--w-navbar)] pt-32.5">
     <div class="px-4 pt-4">
       <div class="columns-7 gap-4">
-        <div class="home__post">
-          <img src="../../public/items/Без названия (1).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (2).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (3).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (4).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (5).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (6).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (7).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (8).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (9).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (11).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Cool winter.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img
-            src="../../public/items/Recent tracksuit design for @noemotions __DM me for custom work 📥 _#clothingdesign #clothingbrand #fashion #fashiondesigner #designer #clothingbrandowner #fyp #viral.jpg"
-            alt=""
-          />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Tie-Back Asymmetrical Shoulder Corset Waist Sweatshirt.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (1).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (2).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (3).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (4).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (5).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (6).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (7).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (8).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (9).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (11).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Cool winter.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img
-            src="../../public/items/Recent tracksuit design for @noemotions __DM me for custom work 📥 _#clothingdesign #clothingbrand #fashion #fashiondesigner #designer #clothingbrandowner #fyp #viral.jpg"
-            alt=""
-          />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Tie-Back Asymmetrical Shoulder Corset Waist Sweatshirt.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (1).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (2).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (3).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (4).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (5).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (6).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (7).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (8).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (9).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия (11).jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Cool winter.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img
-            src="../../public/items/Recent tracksuit design for @noemotions __DM me for custom work 📥 _#clothingdesign #clothingbrand #fashion #fashiondesigner #designer #clothingbrandowner #fyp #viral.jpg"
-            alt=""
-          />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Tie-Back Asymmetrical Shoulder Corset Waist Sweatshirt.jpg" alt="" />
-        </div>
-        <div class="home__post">
-          <img src="../../public/items/Без названия.jpg" alt="" />
-        </div>
+        <HomePost v-for="post in posts" :key="post.id" :path="post.images[0]" />
+      </div>
+      <div>
+        <LoaderCircle :is-load="isLoad" />
       </div>
     </div>
   </div>

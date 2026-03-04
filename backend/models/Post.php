@@ -62,7 +62,7 @@ class Post extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type_id', 'user_id', 'title', 'description', 'category_id', 'post_visible_id', 'post_status_id'], 'required'],
+            [['type_id', 'user_id', 'title', 'description', 'post_visible_id', 'post_status_id'], 'required'],
             [['type_id', 'user_id', 'category_id', 'post_visible_id', 'post_status_id'], 'integer'],
             [['description'], 'string'],
             [['created_at'], 'safe'],

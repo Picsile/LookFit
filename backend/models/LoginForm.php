@@ -13,7 +13,7 @@ use yii\base\Model;
  */
 class LoginForm extends Model
 {
-    public $email;
+    public $email = 'q@q.com';
     public $password;
 
     private $_user = false;
@@ -56,7 +56,7 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), 3600 * 24 * 30);
+            return Yii::$app->user->login($this->getUser());
         }
         return false;
     }

@@ -53,6 +53,11 @@ $config = [
             'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
+                // Guest
+                "POST site/get-some-posts" => "site/get-some-posts",
+                "OPTIONS site/get-some-posts" => "site/options",
+
+                // Auth
                 "POST site/register" => "site/register",
                 "OPTIONS site/register" => "site/options",
 
@@ -67,7 +72,7 @@ $config = [
 
                 // User
                 "POST account/post/public-thing" => "account/post/public-thing",
-                "OPTIONS account/post/publicThing" => "account/post/options",
+                "OPTIONS account/post/public-thing" => "account/post/options",
             ],
         ],
     ],

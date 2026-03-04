@@ -1,24 +1,30 @@
 import axios from 'axios'
 
 const api = axios.create({
-  // baseURL: 'https://localhost.local/backend',
-  baseURL: '/backend',
+  baseURL: 'https://localhost.local/backend',
+  // baseURL: '/backend',
 })
 
-// Автоматически подставляем токен
 api.interceptors.request.use((config) => {
+  // Автоматически подставляем токен
   const token = localStorage.getItem('token')
-
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
 
   if (!('Content-Type' in config.headers)) {
-    config.headers['Content-Type'] = 'application/json'    
+    config.headers['Content-Type'] = 'application/json'
   }
 
   return config
 })
+
+export const guestApi = {
+  async getSomePosts() {
+    const response = await api.post('/site/get-some-posts')
+    return response.data
+  },
+}
 
 export const authApi = {
   async login(formData: any) {
@@ -47,15 +53,13 @@ export const authApi = {
   },
 }
 
-export const userApi = {
+export const accountApi = {
   async publicThing(formData: FormData) {
-
     const response = await api.post('/account/post/public-thing', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-      }
-    }
-    )
+      },
+    })
     return response.data
   },
 }

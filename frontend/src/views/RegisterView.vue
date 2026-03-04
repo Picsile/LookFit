@@ -8,6 +8,7 @@ import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Field, Form } from 'vee-validate'
 import type { SubmissionContext } from 'vee-validate'
+import LoaderCircle from '@/components/LoaderCircle.vue'
 
 const userStore = useUserStore()
 
@@ -47,7 +48,6 @@ async function register(values: RegisterForm, { setErrors }: SubmissionContext):
     isLoad.value = true
 
     const data = await authApi.register(JSON.stringify(values))
-    console.log(data)
 
     if (data.status == 'success') {
       // Получили данные
@@ -164,7 +164,7 @@ watch(
           </div>
         </div>
 
-        <LoaderForm :isLoad="isLoad" />
+        <LoaderCircle :isLoad="isLoad" />
       </Form>
     </div>
   </div>

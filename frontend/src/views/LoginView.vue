@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { authApi } from '@/api/api'
 import InputLabel from '@/components/InputLabel.vue'
-import LoaderForm from '@/components/LoaderForm.vue'
+import LoaderForm from '@/components/LoaderCircle.vue'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
 import { ref, watch } from 'vue'
 import { Field, Form, type SubmissionContext } from 'vee-validate'
+import LoaderCircle from '@/components/LoaderCircle.vue'
 
 const userStore = useUserStore()
 
 interface LoginForm {
   email: string
   password: string
+}
+
+const loginData: LoginForm = {
+  email: 'q@q.com',
+  password: 'q',
 }
 
 const loginValidation = {
@@ -42,7 +48,6 @@ async function login(values: LoginForm, { setErrors }: SubmissionContext): Promi
       await router.push({ name: 'home' })
       return
     } else if (data.errorsValidation) {
-
       const errors = data.errorsValidation
 
       for (const key in errors) {
@@ -71,14 +76,12 @@ watch(
 
 <template>
   <div class="overflow-hidden w-screan h-screen">
-    <!-- <div autoplay muted loop class="fixed -z-10 w-full object-cover object-center">
-      <img src="../assets/background.jpg" alt="" class="w-full">
-    </div> -->
 
     <div class="flex justify-center items-center w-full h-full">
       <Form
         @submit="login"
         :validation-schema="loginValidation"
+        :initial-values="loginData"
         v-sote="{ setErrors }"
         class="flex flex-col items-center gap-8 w-120 bg-(--color-main-panel) px-22 py-14 rounded-4xl"
       >
@@ -134,9 +137,8 @@ watch(
           </div>
         </div>
 
-        <LoaderForm :isLoad="isLoad" />
+        <LoaderCircle :isLoad="isLoad" />
       </Form>
-      <!-- <div class="flex flex-col items-center gap-8 w-120 bg-(--color-main-panel) px-22 py-14 rounded-4xl">Вы успешно зарегистрировались!</div> -->
     </div>
   </div>
 </template>

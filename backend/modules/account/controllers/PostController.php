@@ -98,16 +98,14 @@ class PostController extends ActiveController
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if ($data = Yii::$app->request->post()) {
-            // return ['status' => 'success', '1' => $data];
 
             // Post
             $post->type_id = 1;
             $post->user_id = Yii::$app->user->id;
             $post->title = $data['title'];
             $post->description = $data['description'];
-            $post->post_visible = $data['visible'] == 'public' ? 1 : 2;
-            $post->post_status_id = $data['visible'] == 'public' ? 1 : 2;
-            $post->post_status_id = $data['visible'] == 'public' ? 1 : 2;
+            $post->post_visible_id = $data['visible'] == 'public' ? 1 : 2;
+            $post->post_status_id = 1;
 
             if ($post->save()) {
 

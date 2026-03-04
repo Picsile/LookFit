@@ -10,7 +10,7 @@ defineProps<{
     :class="{ hidden: !isLoad }"
   >
     <div
-      class="border-5 border-(--color-hover-input) border-t-(--color-blue) w-14 h-14 rounded-full animate-spin opacity-60"
+      class="border-5 border-(--color-hover-input) border-t-(--color-brend-simple) w-14 h-14 rounded-full animate-spin opacity-60"
     ></div>
   </div>
 </template>
