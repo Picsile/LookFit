@@ -4,6 +4,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import LoginView from '@/views/LoginView.vue'
 import { useUserStore } from '@/stores/user'
 import PublicThingView from '@/views/PublicThingView.vue'
+import PostView from '@/views/PostView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,14 @@ const router = createRouter({
       path: '/public',
       name: 'public',
       component: PublicThingView,
+      meta: {
+        hideBoards: true,
+      },
+    },
+    {
+      path: '/post/:postId',
+      name: 'post',
+      component: PostView,
       meta: {
         hideBoards: true,
       },

@@ -12,3 +12,10 @@ const props = defineProps<{
     <IconArrowBack />
   </router-link>
 </template>
+
+<style scoped>
+.btn-default {
+  min-width: 54px !important;
+  min-height: 54px;
+}
+</style>

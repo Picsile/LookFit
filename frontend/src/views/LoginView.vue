@@ -82,7 +82,7 @@ watch(
         @submit="login"
         :validation-schema="loginValidation"
         :initial-values="loginData"
-        v-sote="{ setErrors }"
+        v-slot="{ setErrors }"
         class="flex flex-col items-center gap-8 w-120 bg-(--color-main-panel) px-22 py-14 rounded-4xl"
       >
         <!-- Hi -->
